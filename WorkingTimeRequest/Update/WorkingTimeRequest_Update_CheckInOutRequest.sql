@@ -90,6 +90,23 @@ BEGIN
 	RETURN;
 END
 
+-- check if there is another request in the same date
+IF (@RequestType IN (1,2) AND 
+	exists(select top 1 1 from dbo.WorkingTimeRequest r WITH(NOLOCK)
+					Inner join dbo.[InoutMissRequest] l WITH(NOLOCK) ON r.RequestId = l.RequestId
+		where r.empid=@empid 
+			and RequestType=@RequestType
+			and CurrentStatus in  (1,2,4,6)
+			and l.CheckTime = @CheckTime
+			and r.RequestId <> @RequestId
+	))
+BEGIN
+	SET @ErrCode =110
+	SET @ErrMsg = 'There is another request in the same date'
+	RETURN;
+END
+
+
 DECLARE @IsTopManager BIT,@IsDefaultSchedule BIT,@IsLocal  BIT
 SELECT @IsTopManager = IsTopManager,@IsDefaultSchedule =IsDefaultSchedule,@IsLocal=IsLocal from dbo.EmployeeSummary WITH(NOLOCK) WHERE EmpId = @EmpId
 
