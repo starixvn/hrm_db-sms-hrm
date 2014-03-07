@@ -51,6 +51,13 @@ BEGIN
 END
 
 
+IF (ABS(DATEDIFF(DD,@OnDate,@CheckTime))>1)
+BEGIN
+	SET @ErrCode =100
+	SET @ErrMsg = 'Attendant date or Request time invalid.'
+	RETURN;
+END
+
 IF (@RequestType IN (1,2) AND @FromDate IS NULL)
 BEGIN
 	SET @ErrCode =101
