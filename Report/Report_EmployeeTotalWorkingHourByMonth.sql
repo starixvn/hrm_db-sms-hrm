@@ -136,7 +136,7 @@ WHERE DF.WorkDate between @fromDate and @toDate
 	and (@empId is null or e.empid=@empId)
 	and (@isLocal is null or e_s.IsLocal = @isLocal)
 	and e.GroupId IN (SELECT GroupId FROM #GroupsList )
-	 
+	 	
 SELECT a.empid,
 		 SUM(CASE WHEN ISNULL(LeaveDay,0)=0 THEN 1 ELSE ISNULL(LeaveDay,0) END) TotalWorkDays
 INTO #Calendar_TotalWorkDays
@@ -147,7 +147,9 @@ WHERE a.attendancedate between @fromDate and @toDate
 	and (@empId is null or a.empid=@empId)
 	and (@isLocal is null or e_s.IsLocal = @isLocal)
 	and e.GroupId IN (SELECT GroupId FROM #GroupsList )
-	and  isnull(a.Absence,0)=0	 
+	--and  isnull(a.Absence,0)=0	 
+	and  a.InFixed is not null	
+	and a.OutFixed is not null
 GROUP BY a.empid
 
 Declare @query nvarchar(4000)

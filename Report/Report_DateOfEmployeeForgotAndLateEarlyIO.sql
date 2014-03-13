@@ -40,7 +40,8 @@ SELECT attendancedate,
 	a.LateIn , a.EarlyOut ,
 	r.RequestType , iom.RequestId ,  ior.RequestId 
 	,CASE WHEN InFixed IS NULL and a.shiftid is not null THEN 1 ELSE 0 END InFixed
-	,CASE WHEN OutFixed IS NULL and a.shiftid is not null  THEN 1 ELSE 0 END OutFixed
+	,CASE WHEN OutFixed IS NULL and a.shiftid is not null and a.AttendanceDate <CONVERT(DATE,GETDATE()) THEN 1 ELSE 0 END OutFixed
+
 FROM dbo.EmployeeAttendance a WITH (NOLOCK) 
 	Left Join dbo.WorkingTimeRequest r WITH (NOLOCK) 
 		ON a.EmpId = r.EmpId AND r.CurrentStatus IN (1,2,3)
@@ -52,6 +53,7 @@ FROM dbo.EmployeeAttendance a WITH (NOLOCK)
 			and ior.FromDate =attendancedate
 	WHERE a.attendancedate between @fromDate and @todate
 		and a.empid = @empid
+		and a.shiftid is not null
 		--and  isnull(Absence,0)=0 		 
 
 DELETE    tmp

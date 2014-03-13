@@ -114,7 +114,7 @@ BEGIN
 	LEFT JOIN [dbo].employee e WITH(NOLOCK) ON e.EmpId = ot.EmpId
 	LEFT JOIN dbo.LookupData lk  WITH(NOLOCK) ON e.JobTitleId=lk.Id and lk.LookupId = 1
 	LEFT JOIN dbo.[Group] g WITH(NOLOCK) on g.groupid=e.groupid
-	WHERE es.IsLocal = 1
+	WHERE es.IsLocal = 1 AND ot.Status IN (2,4,6)
 
 	IF @@ROWCOUNT = 0
 		BEGIN
@@ -203,7 +203,9 @@ BEGIN
 	FROM dbo.EmployeeAttendance a WITH (NOLOCK) 
 	WHERE a.attendancedate between @fromDate and @todate
 			and (@EmpID IS NULL OR a.EmpID = @EmpID)
-			and  isnull(Absence,0)=0
+			--and  isnull(Absence,0)=0				 
+			and a.InFixed is not null	
+			and a.OutFixed is not null
 	GROUP BY a.EmpId
 
 	IF @TotlTax <> 'UPDATE  tmpOTSum SET  Tax='
