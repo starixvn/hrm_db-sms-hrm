@@ -20,3 +20,4 @@ INNER JOIN dbo.EmployeeSummary es WITH(NOLOCK)
 	 ON ee.EmpId = es.EmpId
 WHERE (ee.isDeleted IS NULL OR ee.isDeleted = 0)
 		AND es.CanOT = 1
+		AND ISNULL(ee.ResignedDate,GETDATE()+30)>GETDATE()
