@@ -1,4 +1,4 @@
-USE [HRM_SMS]
+--USE [HRM_SMS]
 GO
 
 SET ANSI_NULLS ON
@@ -85,7 +85,10 @@ IF ISNULL(@EmpIdKeepInViews,'') <> ''
 IF ISNULL(@EmpIdOvertimes,'') <> ''
 	INSERT INTO #SupervisorId_multi (OwnerId,RequestType)
 	SELECT val,RequestType FROM fnc_strSplit (@EmpIdOvertimes, ',')  , (SELECT 8 as RequestType) tblRole
-
+	
+SELECT * INTO #tmpEmployeeSupervisor
+FROM EmployeeSupervisor WITH(NOLOCK)
+WHERE EmpId = @EmpId AND ActionType = @Role
 
 DELETE FROM [dbo].[EmployeeSupervisor] 
 WHERE EmpId = @EmpId AND ActionType = @Role
@@ -102,8 +105,41 @@ SELECT @EmpId EmpId, OwnerId, @Role, RequestType, @ModifiedBy, GETDATE(),OrderNo
 FROM #SupervisorId_multi
 
  IF @@ERROR <> 0 
-	SELECT @ErrCode=100,@ErrMsg=N'Insert list employee failed'
+	BEGIN
+		
+		DELETE FROM [dbo].[EmployeeSupervisor] 
+		WHERE EmpId = @EmpId AND ActionType = @Role
+
+		INSERT INTO [dbo].[EmployeeSupervisor]
+		SELECT * FROM #tmpEmployeeSupervisor
+
+		SELECT @ErrCode=100,@ErrMsg=N'Insert list employee failed'
+	END
 ELSE 
 	SELECT @ErrCode=0,@ErrMsg=''
 
 DROP TABLE #SupervisorId_multi
+DROP TABLE #tmpEmployeeSupervisor
+
+
+Declare @LogSPData varchar(4000), @now datetime
+	set @now=getdate()
+	--Log general info
+	Select @LogSPData = '<EmployeeSupervisor_InsertEmpByListOwner ActionType="'+ coalesce(cast(@Role as varchar(50)),space(1)) + '" ' +
+	'EmpId="'+ coalesce(cast(@EmpId as varchar(100)),space(1)) + '" ' +
+	'CheckInOuts="'+ coalesce(cast(@EmpIdCheckInOuts as varchar(1000)),space(1)) + '" ' +
+	'LateInEarlyOuts="'+ coalesce(cast(@EmpIdLateInEarlyOuts as varchar(1000)),space(1)) + '" ' +
+	'ChangeShifts="'+ coalesce(cast(@EmpIdChangeShifts as varchar(1000)),space(1)) + '" ' +
+	'Leaves="'+ coalesce(cast(@EmpIdLeaves as varchar(1000)),space(1)) + '" ' +
+	'KeepInViews="'+ coalesce(cast(@EmpIdKeepInViews as varchar(1000)),space(1)) + '" ' +
+	'Overtimes="'+ coalesce(cast(@EmpIdOvertimes as varchar(1000)),space(1)) + '" ' +
+	'ErrCode="'+ coalesce(cast(@ErrCode as varchar(50)),space(1)) + '" ' +
+	'ErrMsg="'+ coalesce(cast(@ErrMsg as varchar(4000)),space(1)) + '" />'	
+
+	EXEC dbo.Log_WriteLog
+		@LogActionID = 1000,
+		@LogDate = @now,
+		@Description = 'Insert Emp By List Owner',
+		@TrackingValue = @LogSPData,
+		@UserID = @ModifiedBy,
+		@EmpID=@EmpID

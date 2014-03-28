@@ -1,4 +1,4 @@
-USE HRM_SMS
+--USE HRM_SMS
 GO
 /****** Object:  StoredProcedure [dbo].[WorkingTimeRequest_ApproveRequest_7]    Script Date: 2013-11-07 9:55:07 AM ******/
 SET ANSI_NULLS ON
@@ -175,3 +175,24 @@ BEGIN CATCH
 END CATCH; 
 
 DROP TABLE #RequestID
+
+-- write log
+	Declare @LogSPData varchar(4000), @now datetime,@Description varchar(200)
+	set @now=getdate()
+	--Log general info
+	Select @LogSPData = '<OverTimeRequest_ApproveRequest RequestID="'+ coalesce(cast(@ListRequestID as varchar(1000)),space(1)) + '" ' +
+		'RoleID="'+ coalesce(cast(@RoleID as varchar(100)),space(1)) + '" ' +
+		'ProcessedBy="'+ coalesce(cast(@ProcessedBy as varchar(100)),space(1)) + '" ' +
+		'ProcessedDate="'+ coalesce(convert(varchar(10),@ProcessedDate, 111 ),space(1)) + '" ' +
+		'ErrCode="'+ coalesce(cast(@ErrCode as varchar(50)),space(1)) + '" ' +
+		'ErrMsg="'+ coalesce(cast(@ErrMsg as varchar(4000)),space(1)) + '" />'		
+
+	SELECT @Description = 'Approve OT Request:' + coalesce(cast(@ListRequestID as varchar(1000)),space(1)) 
+
+	EXEC dbo.Log_WriteLog
+		@LogActionID = 11,
+		@LogDate = @now,
+		@Description = @Description,
+		@TrackingValue = @LogSPData,
+		@UserID = @ProcessedBy,
+		@EmpID=NULL
