@@ -82,7 +82,7 @@ BEGIN
 	RETURN
 END
 
-IF (NOT EXISTS (SELECT TOP 1 1 FROM dbo.OTDailyRequest OT WITH(NOLOCK) WHERE OT.OvertimeDate = @OnDate AND EmpId = @EmpId))
+IF (EXISTS (SELECT TOP 1 1 FROM dbo.OTDailyRequest OT WITH(NOLOCK) WHERE OT.OvertimeDate = @OnDate AND EmpId = @EmpId AND (NormalHours>0	OR OffHours>0	OR PublicHours>0)))
 BEGIN
 	SET @ErrCode =107
 	SET @ErrMsg = 'You have registered overtime on  ' +CONVERT(NVARCHAR(100),@OnDate,106 ) + '.'

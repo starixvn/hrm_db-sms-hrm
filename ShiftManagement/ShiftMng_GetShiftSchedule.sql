@@ -113,7 +113,7 @@ BEGIN
 				+'		CASE WHEN ot.Status IN (2,4,6) THEN CONVERT(BIT,1) ELSE CONVERT(BIT,0) END IsOvertime,' + CHAR(13)
 				+'		CASE WHEN wkr.RequestId IS NOT NULL AND lrd.WorkType = 1 THEN 1 ELSE 0 END IsLeaveOffday, ' + CHAR(13) 
 				+'		CASE WHEN ec.ChangeShiftId IS NULL THEN 0 ELSE 1 END IsChangeShift, ' + CHAR(13) 
-				+'		CASE WHEN ec.IsHoliday IS NOT NULL THEN ec.IsHoliday  
+				+'		CASE --WHEN ec.IsHoliday IS NOT NULL THEN ec.IsHoliday  
 							WHEN  (esum.islocal =1 OR (esum.IsLocal = 0 AND esum.IsExpatUseHoliday=1 )) AND hld.HolidayName IS NOT NULL THEN 1 ELSE 0 END IsHoliday,' + CHAR(13) 
 				+'		ec.IsOffDay ,ec.IsLeaveDay,ec.IsKeepInView,ISNULL(ec.LeaveDay,0) LeaveDay, IsPublic,' + CHAR(13)
 				+'		s2.ShiftId ShiftMultipleID,s2.Code ShiftMultipleCode,s2.Name ShiftMultipleName, ee.NickName AS ModifierName, ec.ModifiedDate, ' + CHAR(13) 
@@ -132,7 +132,7 @@ BEGIN
 				+'	LEFT JOIN dbo.EmployeeCalendar ec WITH (NOLOCK)  ' + CHAR(13) 
 				+'		ON ec.WorkDate =  tmp.WorkDate  AND  e.EmpId = ec.EmpId  ' + CHAR(13) 
 				+'	LEFT JOIN dbo.EmployeeSummary esum WITH (NOLOCK)  ' + CHAR(13) 
-				+'		ON esum.EmpId = e.EmpId AND esum.islocal = 1  ' + CHAR(13) 
+				+'		ON esum.EmpId = e.EmpId --AND esum.islocal = 1  ' + CHAR(13) 
 				+'	LEFT JOIN dbo.OTDailyRequest ot WITH (NOLOCK)  ' + CHAR(13) 
 				+'		ON ot.OvertimeDate =  tmp.WorkDate AND ot.EmpId = e.EmpId AND esum.islocal = 1  ' + CHAR(13) 
 				+'	LEFT JOIN dbo.Holiday hld WITH (NOLOCK)  ' + CHAR(13) 

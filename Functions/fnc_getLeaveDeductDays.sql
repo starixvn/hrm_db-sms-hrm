@@ -18,7 +18,7 @@ BEGIN
 	From dbo.LeaveTrans WITH(NOLOCK) 
 	Where EmpID= @EmpID 
 		AND YEAR(FromDate) = @Year
-		AND RequestId IS NOT NULL
+		--AND RequestId IS NOT NULL
 		AND ISNULL(Deleted,0)<>1
 
 	RETURN ISNULL(@LeaveBalanceDay,0)

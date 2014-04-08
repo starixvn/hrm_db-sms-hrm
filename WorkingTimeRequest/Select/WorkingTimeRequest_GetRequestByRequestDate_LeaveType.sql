@@ -189,8 +189,8 @@ SET @SQL = 'SELECT
 	r.ModifiedBy ModifiedByID,
 	e_m.NickName as ModifiedBy,
 	e_m.FullName as FullNameModified,
-	r.ModifiedDate
-
+	r.ModifiedDate,
+	lr.LeaveType LeaveTypeID
 FROM  dbo.WorkingTimeRequest r WITH (NOLOCK) 
 	INNER JOIN [dbo].LeaveRequest lr WITH (NOLOCK) ON r.RequestId = lr.RequestId
 	LEFT JOIN [dbo].Employee ap_V WITH (NOLOCK) ON ap_V.empid = r.VerifierId
