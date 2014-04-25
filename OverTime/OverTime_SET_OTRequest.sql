@@ -1,4 +1,4 @@
-USE HRM_SMS
+--USE HRM_SMS
 GO
 
 SET ANSI_NULLS ON
@@ -9,7 +9,7 @@ ALTER PROCEDURE [dbo].[Overtime_SET_OTRequest]
 	@EmpId int, 
 	@RequestType smallint=8,
 	
-	@Remark VARCHAR(4000)='',
+	@Remark VARCHAR(8000)='',
 
 	@ProcessedBy int,
 	@ProcessedDate datetime=NULL,
@@ -18,7 +18,7 @@ ALTER PROCEDURE [dbo].[Overtime_SET_OTRequest]
     @ApproverId  int=NULL,
     @HRId  int=NULL,
 
-	@ListDetail VARCHAR(4000) ,
+	@ListDetail VARCHAR(8000) ,
 
 	@ErrCode int = 0 OUTPUT,
 	@ErrMsg nvarchar(200) = '' OUTPUT,

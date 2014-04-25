@@ -1,4 +1,4 @@
-USE HRM_SMS
+--USE HRM_SMS
 GO
 /****** Object:  StoredProcedure [dbo].[WorkingTimeRequest_ApproveRequest_7]    Script Date: 2013-11-07 9:55:07 AM ******/
 SET ANSI_NULLS ON
@@ -39,8 +39,8 @@ IF ISNULL(@ListRequestID,'') <>''
 		,s.ShiftId [ShiftId]
 		,s.Code [ShiftName]
 		,s.TotalHours [ShiftTotalHours]
-		,CONVERT(VARCHAR(5),ot.TimeIn,108) TimeIn
-		,CONVERT(VARCHAR(5),ot.[TimeOut],108) [TimeOut]
+		,CONVERT(VARCHAR(5),Att.InFixed,108) TimeIn
+		,CONVERT(VARCHAR(5),Att.OutFixed,108) [TimeOut]
 		,ot.TotalHours
 		,ot.NormalHours
 		,ot.[OffHours]
@@ -54,6 +54,7 @@ IF ISNULL(@ListRequestID,'') <>''
 		INNER JOIN dbo.[Shift] s WITH (NOLOCK) ON s.ShiftId = ot.[Schedule]
 		INNER JOIN dbo.Employee ee WITH(NOLOCK) ON ee.EmpId = ot.EmpId
 		INNER JOIN dbo.EmployeeCalendar ec WITH(NOLOCK) ON ec.WorkDate = ot.OvertimeDate AND ec.EmpId = ot.EmpId
+		LEFT JOIN dbo.EmployeeAttendance Att WITH (NOLOCK) ON Att.AttendanceDate =  ot.OvertimeDate  AND  Att.EmpId = = ot.EmpId
 	WHERE ot.RequestID IN (SELECT RequestID FROM #RequestID ) 
 	ORDER BY ee.NickName , ot.OvertimeDate
 

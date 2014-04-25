@@ -17,7 +17,7 @@ ALTER PROCEDURE [dbo].OverTime_ResetMultiRequest
 	@RoleID INT,
 	@bOnbehalf bit=0,
 
-	@ListRequestID VARCHAR(4000),
+	@ListRequestID VARCHAR(8000),
 
 	@ErrCode int = 0 OUTPUT,
 	@ErrMsg nvarchar(200) = '' OUTPUT

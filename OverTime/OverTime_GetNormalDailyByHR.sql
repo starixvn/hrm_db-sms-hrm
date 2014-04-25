@@ -95,12 +95,14 @@ BEGIN
 		,ISNULL(s.ShiftId,sc.ShiftId) [ShiftId]
 		,ISNULL(s.TotalHours,sc.TotalHours) [TotalShiftHours]
 		,ISNULL(s.Code,sc.Code) [Schedule]
-		,CASE WHEN ot.[TimeIn] IS NULL OR s.ShiftId  IS NULL THEN 
-				CASE WHEN ec.InFixed IS NULL OR sc.ShiftId  IS NULL THEN NULL ELSE CONVERT(VARCHAR(5),ec.InFixed,108) END
-			ELSE CONVERT(VARCHAR(5),ot.[TimeIn],108) END [TimeIn]
-		,CASE WHEN ot.[TimeOut] IS NULL OR s.ShiftId  IS NULL THEN 
-				CASE WHEN ec.OutFixed IS NULL OR sc.ShiftId  IS NULL THEN NULL ELSE CONVERT(VARCHAR(5),ec.OutFixed,108) END
-			ELSE CONVERT(VARCHAR(5),ot.[TimeOut],108) END [TimeOut]
+		--,CASE WHEN ot.[TimeIn] IS NULL OR s.ShiftId  IS NULL THEN 
+		--		CASE WHEN ec.InFixed IS NULL OR sc.ShiftId  IS NULL THEN NULL ELSE CONVERT(VARCHAR(5),ec.InFixed,108) END
+		--	ELSE CONVERT(VARCHAR(5),ot.[TimeIn],108) END [TimeIn]
+		,CONVERT(VARCHAR(5),ec.InFixed,108) [TimeIn]
+		--,CASE WHEN ot.[TimeOut] IS NULL OR s.ShiftId  IS NULL THEN 
+		--		CASE WHEN ec.OutFixed IS NULL OR sc.ShiftId  IS NULL THEN NULL ELSE CONVERT(VARCHAR(5),ec.OutFixed,108) END
+		--	ELSE CONVERT(VARCHAR(5),ot.[TimeOut],108) END [TimeOut]
+		,CONVERT(VARCHAR(5),ec.OutFixed,108) [TimeOut]
 		,ISNULL(ot.[TotalHours],CASE WHEN sc.ShiftId  IS NULL THEN NULL  ELSE CONVERT(NVARCHAR(10),convert(int,ec.TotalWorkHours) ) +'.'+	
 															REPLICATE('0',2-LEN(CONVERT(NVARCHAR(10),convert(int,round((ec.TotalWorkHours%1)*60,0)))) )
 															+CONVERT(NVARCHAR(10),convert(int,round((ec.TotalWorkHours%1)*60,0))) END) [TotalWorkHours]
