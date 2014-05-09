@@ -32,6 +32,8 @@ Param's Explanation:
 */
 SET NOCOUNT ON;
 
+SELECT @excludedEmpID = null
+
 SET @fromdate = CONVERT(varchar(10),@fromdate,111)
 SET @todate = DATEADD(d, 1, CONVERT(varchar(10),@todate,111))
 SET @todate = DATEADD(ms,-2,@todate) -- end of date (23:59:59.999)

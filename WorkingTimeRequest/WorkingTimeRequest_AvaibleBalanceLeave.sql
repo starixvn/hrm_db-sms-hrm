@@ -69,4 +69,5 @@ ELSE
 
 SELECT @EmpId AS EmployeeId,ISNULL(@LeaveBalanceDay,0) AnnualBalance,
 	ISNULL(@KIVBalance,0) KeepInViewBalance,
-	ISNULL(@CurrenLeaveDays,0) CurrentLeaveBalanceDay
+	CASE WHEN ISNULL(@LeaveBalanceDay,0) < ISNULL(@CurrenLeaveDays,0) THEN ISNULL(@LeaveBalanceDay,0)
+	ELSE ISNULL(@CurrenLeaveDays,0) END CurrentLeaveBalanceDay

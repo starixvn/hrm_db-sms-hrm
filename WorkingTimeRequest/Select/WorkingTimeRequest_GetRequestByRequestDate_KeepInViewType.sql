@@ -30,6 +30,7 @@ Revisions:
 Param's Explanation:
 */
 SET NOCOUNT ON;
+SELECT @excludedEmpID = null
 
 CREATE TABLE #TotalDaysRequestInMonth(empid INT,TotalDaysRequest INT)
 

@@ -33,6 +33,8 @@ Param's Explanation:
 */
 SET NOCOUNT ON
 
+SELECT @excludedEmpID = null
+
 SELECT @fromdate = CONVERT(VARCHAR(10),@fromDate,111) + ' 00:00:00',
 		@todate = CONVERT(VARCHAR(10),@toDate,111) + ' 23:59:59'
 
