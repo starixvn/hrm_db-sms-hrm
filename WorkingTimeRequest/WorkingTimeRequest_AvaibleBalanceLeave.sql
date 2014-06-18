@@ -62,7 +62,7 @@ SELECT @LeaveBalanceDay=ISNULL(@LeaveBalanceDay,0)-ISNULL(@DeductDays,0)-ISNULL(
 
 IF EXISTS(SELECT TOP 1 1 FROM dbo.EmployeeSummary WITH(NOLOCK) WHERE EmpId=@EmpId AND IsLocal = 1 )
 	BEGIN
-		SELECT @CurrenLeaveDays = MONTH(GETDATE())+5-ISNULL(@CurrenLeaveDays,0)
+		SELECT @CurrenLeaveDays = MONTH(@EffectedDay)+5-ISNULL(@CurrenLeaveDays,0)
 	END
 ELSE
 	SELECT @CurrenLeaveDays=ISNULL(@CreditDays,0)- ISNULL(@CurrenLeaveDays,0)

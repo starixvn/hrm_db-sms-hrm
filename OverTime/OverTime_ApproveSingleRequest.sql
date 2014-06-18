@@ -61,7 +61,7 @@ BEGIN
 	RETURN
 END
 
-IF (@RoleID=3 and ((@ApproverId <> @ProcessedBy and @bOnbehalf=1) or (@Status not in (2) )) )
+IF (@RoleID=3 and ((@ApproverId <> @ProcessedBy and @bOnbehalf=1) or (@Status not in (2) ) AND @VerifierId <> @ApproverId) )
 BEGIN
 	SET @ErrCode = 102
 	IF  @Status not in (1,2,3)

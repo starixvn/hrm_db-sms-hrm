@@ -123,37 +123,56 @@ BEGIN TRY
 		END
 		ELSE IF @RoleID = 3 --Approver
 			BEGIN
-				UPDATE OT
-				SET OT.[Status] = 2 
-				FROM [OTDailyRequest] OT WITH(ROWLOCK,UPDLOCK)
-				WHERE RequestID = @RequestID
+				IF @VerifierId <> @ApproverId
+				BEGIN
+					UPDATE OT
+					SET OT.[Status] = 2 
+					FROM [OTDailyRequest] OT WITH(ROWLOCK,UPDLOCK)
+					WHERE RequestID = @RequestID
 
-				IF @Status = 5
-					BEGIN
-						UPDATE dbo.[OTMonthlyRequest] WITH(ROWLOCK,UPDLOCK)
-						SET [CurrentStatus] = 2, -- approved
-							ApproverId= @ProcessedBy,
-							ApprovedDate= @ProcessedDate,
-							ApprovedStatus=1 ,
-							NormalHours	=@NormalHours ,OffHours =@OffHours  ,	PublicHours=@PublicHours
-						WHERE RequestID = @RequestID
+					IF @Status = 5
+						BEGIN
+							UPDATE dbo.[OTMonthlyRequest] WITH(ROWLOCK,UPDLOCK)
+							SET [CurrentStatus] = 2, -- approved
+								ApproverId= @ProcessedBy,
+								ApprovedDate= @ProcessedDate,
+								ApprovedStatus=1 ,
+								NormalHours	=@NormalHours ,OffHours =@OffHours  ,	PublicHours=@PublicHours
+							WHERE RequestID = @RequestID
 
+						END
+					ELSE
+						BEGIN
+							UPDATE dbo.[OTMonthlyRequest] WITH(ROWLOCK,UPDLOCK)
+							SET [CurrentStatus] = 2, -- approved
+								ApproverId= @ProcessedBy,
+								ApprovedDate= @ProcessedDate,
+								ApprovedStatus=1
+							WHERE RequestID = @RequestID
+
+							EXEC [dbo].[Overtime_SET_OTSum]
+								@EmpId =@EmpId, 
+								@Month =@Month,
+
+								@ErrCode = @ErrCode OUTPUT,
+								@ErrMsg = @ErrMsg  OUTPUT
+						END
 					END
-				ELSE
+					ELSE
 					BEGIN
-						UPDATE dbo.[OTMonthlyRequest] WITH(ROWLOCK,UPDLOCK)
-						SET [CurrentStatus] = 2, -- approved
-							ApproverId= @ProcessedBy,
-							ApprovedDate= @ProcessedDate,
-							ApprovedStatus=1
-						WHERE RequestID = @RequestID
+						UPDATE OT
+							SET OT.[Status] = 1 
+							FROM [OTDailyRequest] OT WITH(ROWLOCK,UPDLOCK)
+							WHERE RequestID = @RequestID
 
-						EXEC [dbo].[Overtime_SET_OTSum]
-							@EmpId =@EmpId, 
-							@Month =@Month,
-
-							@ErrCode = @ErrCode OUTPUT,
-							@ErrMsg = @ErrMsg  OUTPUT
+						UPDATE OTM
+							SET [CurrentStatus] = 1, -- approved
+								VerifierId= @ProcessedBy,
+								VerifiedDate= @ProcessedDate,
+								VerifiedStatus=1,
+								NormalHours	=@NormalHours ,OffHours =@OffHours  ,	PublicHours=@PublicHours
+							FROM dbo.[OTMonthlyRequest] OTM WITH(ROWLOCK,UPDLOCK)
+							WHERE RequestID = @RequestID
 					END
 
 			END

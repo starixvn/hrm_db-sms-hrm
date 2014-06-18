@@ -36,7 +36,7 @@ BEGIN TRY
     BEGIN TRANSACTION _RejectRequest_4;
 
 	UPDATE EC
-		SET  RequestedCheckoutTime = 0,
+		SET  RequestedCheckoutTime = NULL,
 			EC.ModifiedDate = @ModifiedDate,
 			EC.ModifiedBy = @ModifiedBy 
 		FROM EmployeeCalendar EC WITH(ROWLOCK,UPDLOCK)

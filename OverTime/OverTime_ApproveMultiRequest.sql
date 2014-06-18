@@ -71,7 +71,7 @@ ELSE IF (@RoleID = 3)
 		FROM #RequestID tmp
 		INNER JOIN dbo.[OTMonthlyRequest] OT WITH(NOLOCK)
 			ON OT.RequestID = tmp.RequestID 
-				AND OT.CurrentStatus <> 2
+				AND (OT.CurrentStatus <> 2 AND OT.VerifierId<>OT.ApproverId)
 	END
 ELSE IF (@RoleID = 6)
 	BEGIN
